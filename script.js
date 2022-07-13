@@ -1,5 +1,7 @@
 /* const { fetchProducts } = require("./helpers/fetchProducts"); */
 
+/* const { fetchItem } = require("./helpers/fetchItem"); */
+
 const createProductImageElement = (imageSource) => {
   const img = document.createElement('img');
   img.className = 'item__image';
@@ -56,6 +58,23 @@ const listResults = (searchs) => {
   return result;
 };
 
+const itemToCart = async (idItem) => {
+  const item = getSkuFromProductItem(idItem.target.parentNode);
+  const result = await fetchItem(item);
+  const cartItems = document.querySelector('.cart__items');
+  const { id, title, price } = result;
+  const elements = createCartItemElement({ sku: id, name: title, salePrice: price });
+  cartItems.appendChild(elements);
+};
+
+const addToCartButtons = () => {
+  const addItem = document.querySelectorAll('.item__add');
+  addItem.forEach((item) => {
+    item.addEventListener('click', itemToCart);
+  });
+};
+
 window.onload = async () => {
   listResults(await listOfProducts());
+  addToCartButtons();
 };

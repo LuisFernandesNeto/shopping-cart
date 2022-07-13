@@ -46,11 +46,10 @@ const listOfProducts = async () => {
   return results;
 };
 
-const listResults = (results) => {
+const listResults = (searchs) => {
   const items = document.querySelector('.items');
-  console.log(results);
-  const result = results.forEach((result) => {
-    const { id, title, thumbnail } = result;
+  const result = searchs.forEach((search) => {
+    const { id, title, thumbnail } = search;
     const elements = createProductItemElement({ sku: id, name: title, image: thumbnail });
     items.appendChild(elements);
   });

@@ -10,8 +10,6 @@ const fetchItem = async (arg) => {
     }
 };
 
-
-
 if (typeof module !== 'undefined') {
   module.exports = {
     fetchItem,

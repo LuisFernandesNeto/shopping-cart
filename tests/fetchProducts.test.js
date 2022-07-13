@@ -20,7 +20,7 @@ describe('1 - Teste a função fetchProducts', () => {
     expect(computer).toEqual(computadorSearch);
   });
   it('It should return `You must provide an url` if fetchProducts does not have an argument', async () => {
-    const retorno = await fetchProducts();
-    expect(retorno).toEqual('You must provide an url');
+    const answer = await fetchProducts();
+    expect(answer).toEqual('You must provide an url');
   });
 });

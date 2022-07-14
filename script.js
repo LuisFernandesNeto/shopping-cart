@@ -1,7 +1,3 @@
-/* const { fetchProducts } = require("./helpers/fetchProducts"); */
-
-/* const { fetchItem } = require("./helpers/fetchItem"); */
-
 const createProductImageElement = (imageSource) => {
   const img = document.createElement('img');
   img.className = 'item__image';
@@ -24,14 +20,44 @@ const createProductItemElement = ({ sku, name, image }) => {
   section.appendChild(createCustomElement('span', 'item__title', name));
   section.appendChild(createProductImageElement(image));
   section.appendChild(createCustomElement('button', 'item__add', 'Adicionar ao carrinho!'));
-
+  
   return section;
+};
+
+const cartItems = document.querySelector('.cart__items');
+
+const saveStorage = () => {
+  const cart = cartItems.innerHTML;
+  saveCartItems(cart);
+};
+
+const sumAll = () => {
+  const lis = document.querySelectorAll('li');
+  let sum = 0;
+  lis.forEach((li) => {
+    const arr = li.innerText.match(/[\d,.]+/g);
+    sum += parseFloat(arr[arr.length - 1]);
+  });
+  document.querySelector('#total').innerText = sum;
 };
 
 const getSkuFromProductItem = (item) => item.querySelector('span.item__sku').innerText;
 
 const cartItemClickListener = (event) => {
   event.target.remove();
+  saveStorage();
+  sumAll();
+};
+
+const loading = () => {
+  const createElement = createCustomElement('h2', 'loading', 'carregando...');
+  const container = document.querySelector('.container');
+  container.appendChild(createElement);
+};
+
+const removeLoading = () => {
+  const h2 = document.querySelector('.loading');
+  h2.remove();
 };
 
 const createCartItemElement = ({ sku, name, salePrice }) => {
@@ -43,7 +69,9 @@ const createCartItemElement = ({ sku, name, salePrice }) => {
 };
 
 const listOfProducts = async () => {
+  loading();
   const search = await fetchProducts('computador');
+  removeLoading();
   const { results } = search;
   return results;
 };
@@ -59,12 +87,16 @@ const listResults = (searchs) => {
 };
 
 const itemToCart = async (idItem) => {
+  loading();
   const item = getSkuFromProductItem(idItem.target.parentNode);
   const result = await fetchItem(item);
-  const cartItems = document.querySelector('.cart__items');
+  removeLoading();
+  /* const cartItems = document.querySelector('.cart__items'); */
   const { id, title, price } = result;
   const elements = createCartItemElement({ sku: id, name: title, salePrice: price });
   cartItems.appendChild(elements);
+  saveStorage();
+  sumAll();
 };
 
 const addToCartButtons = () => {
@@ -74,7 +106,29 @@ const addToCartButtons = () => {
   });
 };
 
+const getItemsfromStorage = () => {
+ const get = getSavedCartItems('cartItems');
+ cartItems.innerHTML = get;
+ const lis = document.querySelectorAll('li');
+ lis.forEach((li) => {
+  li.addEventListener('click', cartItemClickListener);
+ });
+};
+
+const empty = document.querySelector('.empty-cart');
+
+empty.addEventListener('click', () => {
+  const lis = document.querySelectorAll('li');
+  lis.forEach((li) => {
+    li.remove();
+  });
+  saveStorage();
+  sumAll();
+});
+
 window.onload = async () => {
   listResults(await listOfProducts());
   addToCartButtons();
+  getItemsfromStorage();
+  sumAll();
 };

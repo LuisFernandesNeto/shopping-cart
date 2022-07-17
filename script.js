@@ -15,7 +15,7 @@ const createCustomElement = (element, className, innerText) => {
 const createProductItemElement = ({ sku, name, image }) => {
   const section = document.createElement('section');
   section.className = 'item';
-
+  
   section.appendChild(createCustomElement('span', 'item__sku', sku));
   section.appendChild(createCustomElement('span', 'item__title', name));
   section.appendChild(createProductImageElement(image));
@@ -26,16 +26,19 @@ const createProductItemElement = ({ sku, name, image }) => {
 
 const cartItems = document.querySelector('.cart__items');
 
+// 8
+
 const saveStorage = () => {
   const cart = cartItems.innerHTML;
   saveCartItems(cart);
-};
+};  
 
 const sumAll = () => {
   const lis = document.querySelectorAll('li');
   let sum = 0;
   lis.forEach((li) => {
     const arr = li.innerText.match(/[\d,.]+/g);
+    // Créditos ao Gabriel Gonçalves - Turma 23 - Tribo A por ter encontrado esse regex.
     sum += parseFloat(arr[arr.length - 1]);
   });
   document.querySelector('#total').innerText = sum;
@@ -91,7 +94,6 @@ const itemToCart = async (idItem) => {
   const item = getSkuFromProductItem(idItem.target.parentNode);
   const result = await fetchItem(item);
   removeLoading();
-  /* const cartItems = document.querySelector('.cart__items'); */
   const { id, title, price } = result;
   const elements = createCartItemElement({ sku: id, name: title, salePrice: price });
   cartItems.appendChild(elements);
@@ -105,6 +107,8 @@ const addToCartButtons = () => {
     item.addEventListener('click', itemToCart);
   });
 };
+
+// 8
 
 const getItemsfromStorage = () => {
  const get = getSavedCartItems('cartItems');
